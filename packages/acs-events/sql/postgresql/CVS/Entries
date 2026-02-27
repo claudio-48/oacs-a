@@ -1,0 +1,11 @@
+/acs-events-create.sql/1.27.2.2/Mon Aug 19 13:48:32 2024//Toacs-5-10
+/acs-events-drop.sql/1.2/Mon Nov  8 13:10:35 2010//Toacs-5-10
+/activity-create.sql/1.11.2.1/Tue Apr  9 07:05:07 2019//Toacs-5-10
+/activity-drop.sql/1.1/Fri Jul 13 02:45:01 2001//Toacs-5-10
+/oracle-compat-create.sql/1.7/Sat Mar 31 11:29:28 2018//Toacs-5-10
+/oracle-compat-drop.sql/1.2/Sat May 17 09:46:57 2003//Toacs-5-10
+/recurrence-create.sql/1.5/Sun Mar 25 20:56:30 2018//Toacs-5-10
+/recurrence-drop.sql/1.2/Mon Nov  8 13:10:35 2010//Toacs-5-10
+/timespan-create.sql/1.9.2.3/Fri Aug 30 11:05:32 2024//Toacs-5-10
+/timespan-drop.sql/1.2/Mon Nov  8 13:10:35 2010//Toacs-5-10
+D

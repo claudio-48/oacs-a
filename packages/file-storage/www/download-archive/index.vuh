@@ -1,0 +1,39 @@
+ad_page_contract {
+
+    Download a file-storage object as an archive.
+
+    Note: before 26-02-2024 this page offered, via package parameters,
+    to customize the type and extension of the archive. It would also
+    allow to rename the dowloaded archive arbitrarily by manipulating
+    the request URL,
+    e.g. "/file-storage/download-archive/{object_id}/{download_name}".
+
+    We decided to disable both parameter customization and filename
+    manipulation. Instead, this page will now simply redirect to
+    www/download-zip, which apart from the two aforementioned
+    features, will behave the same. The download name will now always
+    be the "real" (and sanititzed) name of the object, while the
+    archive type and extension will always be zip. Calls to this URL
+    that were not relying on the two features (e.g. expecting a
+    specific file type) should not be affected.
+
+    @author <a href="mailto:yon@openforce.net">yon@openforce.net</a>
+    @creation-date 2002-05-21
+    @version $Id: index.vuh,v 1.8.2.4 2024/02/26 15:05:29 antoniop Exp $
+
+} {
+    {object_id:object_id ""}
+}
+
+if {$object_id eq ""} {
+    set object_id [ad_urlencode [lindex [split [ad_conn path_info] /] 0]]
+}
+
+ad_returnredirect ../download-zip?object_id=$object_id
+ad_script_abort
+
+# Local variables:
+#    mode: tcl
+#    tcl-indent-level: 4
+#    indent-tabs-mode: nil
+# End:

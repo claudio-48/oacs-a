@@ -1,0 +1,51 @@
+ad_library {
+
+    APM Callback procs
+
+    @author Victor Guerra (vguerra@wu-wien.ac.at)
+    @creation-date 2008-12-16
+    @cvs-id $Id: apm-callback-procs.tcl,v 1.2.2.5 2024/02/08 18:40:48 gustafn Exp $
+}
+
+namespace eval ref-timezones::apm {}
+
+ad_proc -private ref_timezones::apm::after_upgrade {
+    {-from_version_name:required}
+    {-to_version_name:required}
+} {
+    After upgrade callback.
+} {
+    apm_upgrade_logic \
+        -from_version_name $from_version_name \
+        -to_version_name $to_version_name \
+        -spec {
+            5.5.0d1 5.5.0d2 {
+                db_load_sql_data [acs_root_dir]/packages/ref-timezones/sql/[db_driverkey ""]/upgrade/upgrade-timezones.ctl
+                set entries [db_string _ "select count(*) from timezones"]
+                ns_log Notice "$entries timezones loaded"
+            }
+            5.9.0b1 5.9.0b2 {
+                db_load_sql_data [acs_root_dir]/packages/ref-timezones/sql/[db_driverkey ""]/upgrade/upgrade-timezones.ctl
+                set entries [db_string _ "select count(*) from timezones"]
+                ns_log Notice "$entries timezones loaded"
+            }
+            5.10.1b1 5.10.1b2 {
+                ns_log notice "Load fresh timezone data"
+                db_load_sql_data [acs_root_dir]/packages/ref-timezones/sql/[db_driverkey ""]/upgrade/upgrade-timezones.ctl
+                set entries [db_string _ "select count(*) from timezones"]
+                ns_log Notice "$entries timezones loaded"
+            }
+            5.10.1b2 5.10.1b3 {
+                ns_log notice "Load fresh timezone data"
+                db_load_sql_data [acs_root_dir]/packages/ref-timezones/sql/[db_driverkey ""]/upgrade/upgrade-timezones.ctl
+                set entries [db_string _ "select count(*) from timezones"]
+                ns_log Notice "$entries timezones loaded"
+            }
+        }
+}
+
+# Local variables:
+#    mode: tcl
+#    tcl-indent-level: 4
+#    indent-tabs-mode: nil
+# End:

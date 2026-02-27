@@ -1,0 +1,71 @@
+ad_page_contract {
+
+    Form to edit a role
+
+    @author mbryzek@arsdigita.com
+    @creation-date Wed Dec 13 10:20:29 2000
+    @cvs-id $Id: edit.tcl,v 1.7.2.2 2023/03/28 09:54:10 antoniop Exp $
+
+} {
+    {pretty_name ""}
+    {pretty_plural ""}
+    role:notnull
+    { return_url:localurl "" }
+} -properties {
+    context:onevalue
+}
+
+set context [list [list "../" "Relationship types"] [list [export_vars -base one role] "One role"] "Edit"]
+
+template::form create role_form
+
+if { ![template::form is_submission role_form] } {
+    db_1row select_role_props {
+        select r.pretty_name, r.pretty_plural
+          from acs_rel_roles r
+         where r.role = :role
+    }
+}
+
+template::element create role_form return_url \
+	-optional \
+	-value $return_url \
+	-datatype text \
+	-widget hidden
+
+template::element create role_form role \
+	-value $role \
+	-datatype text \
+	-widget hidden
+
+template::element create role_form pretty_name \
+	-label "Pretty name" \
+	-value $pretty_name \
+	-datatype text \
+	-html {maxlength 100}
+
+template::element create role_form pretty_plural \
+	-label "Pretty plural" \
+	-value $pretty_plural \
+	-datatype text \
+	-html {maxlength 100}
+
+if { [template::form is_valid role_form] } {
+    db_dml update_role {
+	update acs_rel_roles r
+	   set r.pretty_name = :pretty_name,
+	       r.pretty_plural = :pretty_plural
+	 where r.role = :role
+    }
+    if { $return_url eq "" } {
+	set return_url [export_vars -base one role]
+    }
+    ad_returnredirect $return_url
+    ad_script_abort
+}
+
+# Local variables:
+#    mode: tcl
+#    tcl-indent-level: 4
+#    indent-tabs-mode: nil
+# End:

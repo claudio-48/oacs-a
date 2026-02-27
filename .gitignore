@@ -1,0 +1,38 @@
+# Dipendenze e pacchetti esterni
+packages/*.tgz
+packages/*.zip
+
+# File di log (tutto il contenuto della cartella log)
+log/*
+!log/
+
+# File temporanei e cache
+*.log
+*.tmp
+*.bak
+*.swp
+.sass-cache
+temp/
+cache/
+
+# Configurazioni sensibili (non committare password/credenziali)
+*.ini
+*.conf
+config.tcl
+parameters.tcl
+openacs-4.tcl
+
+# Database e dump
+*.sql
+*.backup
+var/
+db-backup/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.sublime-project
+
+# OS-generated
+.DS_Store
+Thumbs.db

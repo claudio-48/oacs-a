@@ -1,0 +1,35 @@
+ad_page_contract { 
+    Generates a package spec.
+
+    @param version_id The package to be processed.
+    @param write_p Set to 1 if you want the specification file written to disk.
+    @author Jon Salz [jsalz@arsdigita.com]
+    @creation-date 9 May 2000
+    @cvs-id $Id: version-generate-info.tcl,v 1.7.2.1 2023/10/06 12:09:19 gustafn Exp $
+} {
+    {version_id:naturalnum,notnull}
+    {write_p:boolean,notnull 0}
+}
+
+if { $write_p } {
+    if { [catch { apm_package_install_spec $version_id } error] } {
+	ad_return_error "Error" "Unable to create the specification file:
+<blockquote><pre>$error</pre></blockquote>
+"
+        return
+    }
+
+    ad_returnredirect "version-view?version_id=$version_id"
+    ad_script_abort
+} else {
+    ns_return 200 text/plain [apm_generate_package_spec $version_id]
+    ad_script_abort
+}
+
+
+
+# Local variables:
+#    mode: tcl
+#    tcl-indent-level: 4
+#    indent-tabs-mode: nil
+# End:

@@ -1,0 +1,114 @@
+<html>
+<head>
+   <title>IdHandler Service Contract</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h2>IdHandler Service Contract</h2>
+
+Besides displaying the names of objects, some pages also want to
+provide links to the objects. Unfortunately, there currently is no
+way to do so.
+<p>
+First, we need to know that package_id of the package responsible for
+the object, then we would need to figure out the url to that package
+instance. This can be done, but even then we would need the local url
+to the page being able to display a certain object.  Since a package
+may have more than one type of objects (i.e. file folders, files, file
+versions), we can not simply store additional package information
+about which page to call to display an object.
+<p>
+The solution to this kind of problem is by not resolving the url
+at all during display-time, but doing so at the time the user
+actually wants to see an object. The links would simply direct
+to /o/$object_id, which is a global virtual-url-handling page
+that will figure out the package instance url and then relying
+upon a Service Contract to get the local url - that means every
+package holding displayable objects should implement this
+interface for its objects:
+
+<pre>
+declare
+    v_id	integer;
+begin
+    v_id :=  acs_sc_contract.new(
+	    contract_name => 'AcsObject',
+	    contract_desc => 'Acs Object Id Handler'
+    );
+    v_id := acs_sc_msg_type.new(
+	    msg_type_name => 'AcsObject.PageUrl.InputType',
+	    msg_type_spec => 'object_id:integer'
+    );
+    v_id := acs_sc_msg_type.new(
+	    msg_type_name => 'AcsObject.PageUrl.OutputType',
+	    msg_type_spec => 'page_url:string'
+    );
+    v_id := acs_sc_operation.new(
+	    contract_name => 'AcsObject',
+	    operation_name => 'PageUrl',
+	    operation_desc => 'Returns the package specific url to a page
+that displays an object',
+	    operation_iscacheable_p => 'f',
+	    operation_nargs => 1,
+	    operation_inputtype => 'AcsObject.PageUrl.InputType',
+	    operation_outputtype => 'AcsObject.PageUrl.OutputType'
+    );
+
+    v_id := acs_sc_impl.new (
+              'AcsObject',
+              'apm_package_idhandler',
+              'acs-kernel'
+    );
+    v_id := acs_sc_impl.new_alias (
+              'AcsObject',
+              'apm_package_idhandler',
+              'PageUrl',
+              'apm_pageurl',
+              'TCL'
+    );
+    acs_sc_binding.new (
+              contract_name => 'AcsObject',
+              impl_name => 'apm_package_idhandler'
+    );                             
+
+    v_id := acs_sc_impl.new (
+              'AcsObject',
+              'user_idhandler',
+              'acs-kernel'
+    );
+    v_id := acs_sc_impl.new_alias (
+              'AcsObject',
+              'user_idhandler',
+              'PageUrl',
+              'acs_user::pageurl',
+              'TCL'
+    );
+    acs_sc_binding.new (
+              contract_name => 'AcsObject',
+              impl_name => 'user_idhandler'
+    );                             
+end;
+</pre>
+The appropriate tcl-procs look like the following:
+<pre>
+ad_proc -public apm_pageurl { object_id } {
+    Service Contract Proc to resolve a URL for a package_id
+} {
+    return
+}
+
+namespace eval acs_user {
+    ad_proc -public pageurl { object_id } {
+	Service Contract Proc to resolve a URL for a user_id
+    } {
+	return "shared/community-member?user_id=$object_id"
+    }
+}
+</pre>
+Note that the name of the implementation has to be the object-type
+followed by _idhandler.
+<p>
+<hr>
+<address><a href="mailto:timo@studio-k4.de">timo@studio-k4.de</a></address>
+</body>
+</html>
